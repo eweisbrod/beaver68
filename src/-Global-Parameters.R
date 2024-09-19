@@ -1,6 +1,6 @@
 ## Define Global Parameters ----------------------------------------------------
 
-# 1 - Setup the Data Folder Path -----------------------------------------------
+# 1 - Setup the Data Path -----------------------------------------------
 
 # A USEFUL TRICK FOR SHARING CODE WITH COAUTHORS
 # is to store the path to your local data folder 
@@ -15,7 +15,7 @@
 #The .Renviron file should be open in a separate tab in Rstudio
 #if you ran the above line correctly.
 
-#DATA_PATH = "D:/Dropbox/example-project"
+#DATA_DIR = "C:/Users/e679w418/Dropbox/ACCT 932/data"
 
 # Replace the quoted directory name in the example with the path
 # to whatever folder you would like to store your data in
@@ -34,21 +34,12 @@
 #The benefit of this is that you now only need one version of the code no 
 # matter which coauthor is running the code. The same code should work for all
 # coauthors or work the same way whether you are on your laptop or desktop, etc.
-data_path <- Sys.getenv('DATA_PATH')
+DATA_DIR <- Sys.getenv('DATA_DIR')
 
 #If the above is too complicated and you don't have coauthors you can just set
 #data_path manually by deleting everything above and uncommenting the below:
-#data_path <- "D:/Dropbox/example-project"
+#DATA_DIR = "C:/Users/e679w418/Dropbox/ACCT 932/data"
 
-#You would then replace "D:/example-project" with your own data path. 
+#You would then replace my path with your own data path. 
 
-# 2 - Setup any project-specific parameters ------------------------------------
 
-# For example, you might want to define sample years here and then you can 
-# refer to them throughout the code as needed, there are many use-cases.
-
-#example parameters
-# beg_year and end_year to define the sample period
-beg_year <- 1970
-# the assignment arrow is an R grammar style, but equal signs work too
-end_year = 2022
