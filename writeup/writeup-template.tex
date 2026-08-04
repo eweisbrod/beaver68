@@ -1,0 +1,259 @@
+% =============================================================================
+% writeup-template.tex
+%
+% ACCT 932 -- Beaver (1968) replication write-up, LaTeX version.
+%
+% HOW THIS WORKS
+%   You do not paste numbers into this document. The pipeline writes
+%   tables to OUTPUT_DIR as .tex files and figures as .pdf, and this
+%   document pulls them in with \input{} and \includegraphics{}. Re-run
+%   the pipeline, recompile, and every number updates itself. That is the
+%   entire point -- a transcription error becomes impossible.
+%
+% TO COMPILE
+%   Locally:   pdflatex writeup-template  ->  bibtex writeup-template
+%              ->  pdflatex twice more
+%   Overleaf:  upload this file, references.bib, and the contents of your
+%              output/ folder. Overleaf's free tier does not sync with
+%              GitHub, so you upload output/ by hand after each run.
+%
+% NOTE ON PATHS
+%   \graphicspath below assumes the default layout, with this file in
+%   writeup/ and OUTPUT_DIR set to output/. If you changed OUTPUT_DIR in
+%   .env, change the paths here to match.
+% =============================================================================
+
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{natbib}
+% plainnat ships with natbib itself, so this compiles on a bare TinyTeX
+% install as well as on Overleaf. If you prefer a journal's house style
+% (chicago, apalike, aer), swap it here -- but on a local TinyTeX you may
+% first need: tinytex::tlmgr_install("chicago")
+\bibliographystyle{plainnat}
+
+% -----------------------------------------------------------------------------
+% REQUIRED PREAMBLE FOR THE GENERATED TABLES -- do not delete.
+%
+% The .tex tables written by src/004-analyze-data.R are produced by the
+% tinytable package, which builds them with `tabularray` rather than a
+% plain tabular environment. Without the block below, \input{} of any
+% generated table fails with "Environment talltblr undefined."
+%
+% This is copied verbatim from tinytable's documentation. If you switch
+% the table generator, you can drop it.
+% -----------------------------------------------------------------------------
+\usepackage{tabularray}
+\usepackage[normalem]{ulem}
+\UseTblrLibrary{booktabs}
+\UseTblrLibrary{siunitx}
+\newcommand{\tinytableTabularrayUnderline}[1]{\underline{#1}}
+\newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
+\NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
+
+\graphicspath{{../output/}}
+
+\title{Replicating \citet{beaver1968}:\\
+       The Information Content of Annual Earnings Announcements}
+\author{Your Name\\ACCT 932}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+% One paragraph. What did you do, and what did you find? Write this LAST.
+Replace this with a short abstract.
+\end{abstract}
+
+
+% =============================================================================
+\section{Introduction}
+% =============================================================================
+
+% What question did Beaver ask, why did it matter in 1968, and what are
+% you doing about it? Two or three paragraphs is plenty.
+
+Replace this text.
+
+
+% =============================================================================
+\section{Research design}
+% =============================================================================
+
+% Describe the design in prose: the sample, the event window, the two
+% outcome measures, and how you handle announcements that fall on
+% non-trading days.
+%
+% BE EXPLICIT about where you depart from Beaver. The departures are the
+% interesting part, and the "DESIGN CHOICE" comments in
+% src/002-transform-data.R flag each one.
+
+Replace this text.
+
+% NOTE: each generated .tex file is a COMPLETE, self-contained table --
+% it brings its own \begin{table}, \centering, and \caption. So you
+% \input{} it bare. Wrapping it in another \begin{table} produces the
+% error "LaTeX Error: Not in outer par mode."
+\input{../output/sample-selection.tex}
+
+
+% =============================================================================
+\section{Results}\label{sec:results}
+% =============================================================================
+
+\subsection{Descriptive statistics}
+
+\input{../output/descriptives.tex}
+
+Replace this text with a paragraph interpreting the table.
+
+\subsection{Replication of Beaver's figures}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fig1-volume.pdf}
+\caption{Trading volume around annual earnings announcements. Compare to
+         Figure 1 of \citet{beaver1968}.}
+\label{fig:volume}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fig2-return-variability.pdf}
+\caption{Return variability around annual earnings announcements. Compare
+         to Figure 5 of \citet{beaver1968}.}
+\label{fig:variability}
+\end{figure}
+
+Replace this text.
+
+\subsection{Formal statistical tests}
+
+% Beaver assessed significance informally. This is the modern version --
+% explain what the specification does and why the fixed effects and
+% clustering are there.
+
+\input{../output/main-results-returns.tex}
+
+\input{../output/main-results-turnover.tex}
+
+Replace this text.
+
+\subsection{Has the effect changed over time?}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fig3-turnover-by-decade.pdf}
+\caption{Median share turnover around annual earnings announcements, by decade.}
+\label{fig:turnover}
+\end{figure}
+
+\input{../output/by-decade.tex}
+
+Replace this text.
+
+
+% =============================================================================
+\section{Discussion questions}
+% =============================================================================
+
+% Answer each question in a paragraph or two. These are graded on the
+% quality of the reasoning, not on length.
+
+\subsection*{1. Sample selection}
+How do the research questions of \citet{beaver1968} and
+\citet{ballbrown1968} differ? If there is overlap, does one paper provide
+superior evidence, or are they just different?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{2. Data differences}
+What differences are there in the data (sample period, frequency, number
+of firms) used by \citet{beaver1968} relative to \citet{ballbrown1968}?
+Why do these differences exist?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{3. Price versus volume}
+Which is the better variable for Beaver's research question---price or
+volume? Is it helpful to have both?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{4. How much information?}
+\citet{ballshivakumar2008} argue earnings announcements provide
+relatively little of the market's total information. If volume measures
+information content, what does your Figure~\ref{fig:volume} imply about
+the proportion of information conveyed during announcement periods? Can
+that be reconciled with \citet{beaver1968}?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{5. Statistical significance}
+\citet{beaver1968} discusses significance informally (pp.~77, 81--82).
+Why did he use that approach? Compare it to the regression table in
+Section~\ref{sec:results} --- what does the formal test buy you, and what
+assumptions does it add?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{6. Why plots?}
+The primary analyses in \citet{beaver1968} are plots. The cost of
+producing plots has collapsed since 1968, yet we rarely see primary
+analyses presented as plots today. Why?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{7. Overgeneralization}
+After reading \citet{bamber2000}, do Beaver's sample selection criteria
+still seem reasonable? Do your results support the generalizations later
+researchers made from \citet{beaver1968}, or do the concerns of
+\citet{bamber2000} remain applicable?
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+\subsection*{8. Your design choices}
+Your replication makes several measurement and design choices that differ
+from Beaver's. Identify them. Do you expect them to materially affect the
+tenor of the results? Change at least one of the parameters at the top of
+\texttt{src/002-transform-data.R}, re-run, and report what happens.
+
+\medskip\noindent\textit{Your answer:}
+
+\medskip
+
+
+% =============================================================================
+\section{Conclusion}
+% =============================================================================
+
+Replace this text.
+
+
+\bibliography{references}
+
+\end{document}

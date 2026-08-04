@@ -1,0 +1,3 @@
+# Normalize line endings to LF in the repo, convert to OS-native on checkout.
+# This prevents CRLF warnings on Windows and ensures consistent diffs.
+* text=auto
