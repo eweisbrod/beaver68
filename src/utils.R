@@ -204,9 +204,8 @@ message("imported count_rows function")
 #'
 #' Database-agnostic — works with any dbplyr `tbl()` backed by a DBI
 #' connection (WRDS PostgreSQL via RPostgres, BigQuery via bigrquery,
-#' Snowflake via odbc, local DuckDB, etc.). Used to be called
-#' `download_wrds()`; the rename reflects that the WRDS-specific bit
-#' lives in your connection setup, not in this function.
+#' Snowflake via odbc, local DuckDB, etc.). The WRDS-specific part lives
+#' in your connection setup, not in this function.
 #'
 #' @param tbl A dbplyr lazy table built via `tbl(connection, ...)` and
 #'   optional dplyr verbs (`filter`, `select`, `mutate`, joins). The
@@ -236,9 +235,8 @@ message("imported count_rows function")
 #' buffers). On a 16 GB machine the default 8 GB target is conservative;
 #' on a 4 GB machine try `max_ram_mb = 2000`.
 #'
-#' This function follows the same shape as Ian Gow's
-#' `db2pq::lazy_tbl_to_pq()`, with the addition of auto-sized batches
-#' and zstd compression by default. See `001-download-data.R` for the
+#' Batches are auto-sized from `max_ram_mb` and files are written with
+#' zstd compression by default. See `001-download-data.R` for the
 #' un-wrapped version of this code (the Compustat fundq download), which
 #' shows each step in detail.
 #'

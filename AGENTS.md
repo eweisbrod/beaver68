@@ -16,12 +16,10 @@ repository even when it is correct.
 
 ## Deliberate design decisions
 
-- **No Quarto, R Markdown, or notebooks.** Code writes figures and tables to
-  `OUTPUT_DIR`; the write-up is a separate document that pulls those files in.
-  Students choose Word or LaTeX. Do not reintroduce a literate-programming
-  layer.
-- **R only.** The upstream `project-template` ships parallel Python and Stata
-  implementations; this repository deliberately does not.
+- **Code and write-up stay separate.** Scripts write figures and tables to
+  `OUTPUT_DIR`; the write-up is its own document that pulls those files in.
+  Students choose Word or LaTeX. Keep this separation when adding features.
+- **R only.** Every script in this project is R.
 - **Every table is emitted in both LaTeX (`.tex`) and Word (`.docx`)** from a
   single set of fitted models, and every figure as both `.pdf` and `.png`. If
   you add an output, add it in both formats.

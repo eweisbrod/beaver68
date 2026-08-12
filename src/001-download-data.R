@@ -203,9 +203,9 @@ if (file.exists(fundq_path)) {
 # Column names changed (dlycaldt not date, dlyret not ret) and the old
 # integer codes were replaced by strings. In particular the old `exchcd`
 # (1 = NYSE) is now `primaryexch` ('N' = NYSE, 'A' = NYSE American,
-# 'Q' = Nasdaq). Handily, these identifiers now live on the daily file
-# itself, so we do NOT need the fiddly date-range join to `stocknames`
-# that older code (including the textbook version of this exercise) uses.
+# 'Q' = Nasdaq). These identifiers live on the daily file itself, which is
+# convenient: we can screen on exchange and share type directly, with no
+# date-range join to a separate names table.
 #
 # We apply the common-stock screen server-side because it discards funds,
 # ADRs, and other non-common securities that Beaver's design never

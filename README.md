@@ -33,11 +33,10 @@ one wrote, and leaves its output on disk:
 
 `src/run-all.R` runs scripts 1–5 and writes a log per step to `log/`.
 
-**There is no Quarto, R Markdown, or notebook here.** Code produces figures and
-tables into an output folder; you write your paper separately and pull those
-files in. That separation is deliberate — it is how essentially every empirical
-accounting paper is actually produced, and it means your write-up format is
-your choice.
+**Code and write-up are separate.** The scripts produce figures and tables into
+an output folder; you write your paper alongside them and pull those files in.
+This is how empirical accounting papers are actually produced, and it means the
+write-up format is your choice — Word or LaTeX, both supported.
 
 ---
 
@@ -47,6 +46,7 @@ your choice.
 
 | | Required? | Where |
 |---|---|---|
+| **Git** | Yes | <https://git-scm.com/downloads> — step 2 below walks through it |
 | **R** ≥ 4.1 | Yes | <https://cran.r-project.org/> |
 | **RStudio** | Yes | <https://posit.co/download/rstudio-desktop/> |
 | **WRDS account** with Compustat + CRSP | Yes | <https://wrds-www.wharton.upenn.edu/> |
@@ -61,19 +61,101 @@ You do **not** need to install R packages by hand. Every script begins with
 `pacman::p_load(...)`, which installs anything missing and then loads it. The
 full list is documented under [Dependencies](#dependencies) below.
 
-### 2. Clone and open
+### 2. Install Git
+
+Git is the tool that copies this project onto your machine and tracks the
+changes you make to it. Install it once and you have it for every project
+afterwards.
+
+**Windows.** Download the installer from <https://git-scm.com/downloads> and
+run it. The defaults are fine — click through. Two screens are worth a glance:
+
+- *"Adjusting your PATH environment"* — keep the recommended middle option,
+  **"Git from the command line and also from 3rd-party software."** This is
+  what lets RStudio find Git.
+- *"Choosing the default editor"* — the default (Vim) is awkward if you have
+  not used it. Pick **Notepad** or **Visual Studio Code** if offered.
+
+If you use `winget`, `winget install --id Git.Git -e` does the same thing.
+
+**macOS.** Open Terminal and run:
+
+```bash
+xcode-select --install
+```
+
+That installs Apple's command line tools, which include Git. If you use
+Homebrew, `brew install git` also works and gives you a newer version.
+
+**Linux.** `sudo apt install git` on Debian/Ubuntu, `sudo dnf install git` on
+Fedora.
+
+#### Check that it worked
+
+Open a **new** terminal (Command Prompt, PowerShell, or Git Bash on Windows;
+Terminal on macOS) and run:
+
+```bash
+git --version
+```
+
+You should see something like `git version 2.45.1`. If you instead get
+"command not found" or "not recognized as an internal or external command",
+Git either did not install or is not on your PATH — the usual fix on Windows
+is to close and reopen the terminal, since PATH changes only apply to new
+ones.
+
+#### Tell Git who you are
+
+Git stamps your name and email on every change you save. Set them once:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@ku.edu"
+```
+
+### 3. Get the repository
+
+Pick a folder where you keep code — **not** inside Dropbox, OneDrive, or
+iCloud, since file-syncing services and Git tend to fight over the same files.
+Then:
 
 ```bash
 git clone https://github.com/eweisbrod/beaver68.git
 cd beaver68
 ```
 
-Open `beaver68.Rproj` in RStudio. **This matters** — every script uses paths
-like `src/utils.R` that are relative to the project root, and opening the
+That creates a `beaver68` folder containing the project.
+
+> **Prefer buttons to typing?** [GitHub Desktop](https://desktop.github.com/)
+> does the same thing with a GUI: *File → Clone repository → URL*, paste
+> `https://github.com/eweisbrod/beaver68.git`, choose where to put it. RStudio
+> can also do it: *File → New Project → Version Control → Git*.
+
+Now open **`beaver68.Rproj`** in RStudio. **This matters** — every script uses
+paths like `src/utils.R` that are relative to the project root, and opening the
 `.Rproj` is what sets the working directory correctly. If you open a `.R` file
 directly instead, you will get `cannot open file 'src/utils.R'`.
 
-### 3. Check your setup
+#### Saving your own work
+
+You will modify these scripts, and your changes are part of what you turn in.
+To snapshot your work as you go:
+
+```bash
+git add -A
+git commit -m "short note about what you changed"
+```
+
+Commit whenever you finish something that works. Each commit is a point you
+can return to, which is worth a great deal the first time you break something
+that used to run. RStudio has a **Git** tab that does the same thing with
+checkboxes if you prefer.
+
+Your `.env` file and everything in `output/` are ignored by Git on purpose —
+they hold machine-specific paths and regenerable results.
+
+### 4. Check your setup
 
 Open `src/000-check-setup.R` and run it (Ctrl+A, then Ctrl+Enter). It installs
 the R packages and then verifies your R version, working directory, data
@@ -86,13 +168,15 @@ exist yet. That is expected — the next step creates them.
 Run this **before** the download, not after. It takes about a minute and
 catches the problems that would otherwise surface 20 minutes into a data pull.
 
-### 4. First-time setup
+### 5. First-time setup
 
 Open `src/001-download-data.R` and **run it interactively** (Ctrl+A, then
 Ctrl+Enter). The `project_setup()` call near the top will prompt you once for:
 
-- **`RAW_DATA_DIR`** — where raw WRDS pulls go. Put this **outside** the repo,
-  e.g. a Dropbox folder. Data does not belong in Git.
+- **`RAW_DATA_DIR`** — where raw WRDS pulls go. Put this **outside** the repo;
+  data does not belong in Git. A Dropbox or OneDrive folder is a good choice
+  here. (The advice in step 3 was about where the *code* lives — keep the repo
+  out of a synced folder, but the data is fine in one.)
 - **`DATA_DIR`** — where derived files go. Also outside the repo.
 - **`OUTPUT_DIR`** — figures and tables. `output` (inside the repo) is fine.
 - **WRDS username and password** — stored in your operating system's
@@ -117,7 +201,7 @@ Two rules for this file:
 
 Your WRDS password is *not* in this file and should never be put there.
 
-### 5. Run it
+### 6. Run it
 
 Either run `src/run-all.R`, or step through the five scripts in order. The
 first run takes roughly 20–25 minutes, almost all of it downloading CRSP daily
@@ -127,7 +211,7 @@ returns. Subsequent runs skip any raw file already on disk.
 > from `"1970-01-01"` to `"2000-01-01"`. The download drops to about five
 > minutes. You lose the early decades in the by-decade figures.
 
-### 6. Write it up
+### 7. Write it up
 
 Two skeletons are provided in `writeup/`. Use whichever you prefer — the
 pipeline produces both formats regardless.
@@ -231,10 +315,12 @@ replication cheap: someone else can rerun scripts 2–5 against your preserved
 raw inputs without touching WRDS. It is also what the *Journal of Accounting
 Research* Data and Code Sharing Policy expects, which is why script 5 exists.
 
-**CRSP "v2" column names.** WRDS migrated CRSP to a new schema. If you consult
-older code or textbooks you will see `date`, `ret`, `vol`, and `exchcd`; the
-current names are `dlycaldt`, `dlyret`, `dlyvol`, and `primaryexch`. The
-scripts here use the current ones.
+**CRSP "v2" (CIZ) column names.** These scripts use CRSP's current schema, where
+the daily stock file is `crsp.dsf_v2` and the columns you will work with are
+`dlycaldt` (date), `dlyret` (return), `dlyvol` (volume), and `primaryexch`
+(exchange, `"N"` = NYSE). Two conveniences follow from it: the exchange and
+share-type identifiers sit directly on the daily file, and share volume and
+shares outstanding are both available for computing turnover.
 
 ---
 
@@ -248,6 +334,7 @@ actually doing.
 
 | | Version | Why |
 |---|---|---|
+| Git | any recent | clone the project, track your changes |
 | R | ≥ 4.1 | native pipe `\|>` and `\(x)` lambdas |
 | RStudio | any recent | sets the working directory via `beaver68.Rproj` |
 | WRDS account | — | Compustat (`comp`) and CRSP (`crsp`) subscriptions |
@@ -306,21 +393,12 @@ always works. If you want a journal house style (`chicago`, `aer`), swap
 | Compustat | `comp.fundq` | 001 |
 | CRSP | `crsp.dsf_v2`, `crsp.inddlyseriesdata`, `crsp.ccmxpf_lnkhist` | 001 |
 
-`crsp.dsf_v2` is the CRSP "v2" (CIZ) daily stock file. Older code and textbooks
-use the legacy `crsp.dsf`, whose column names differ — see *Notes on the data*.
+`crsp.dsf_v2` is the CRSP "v2" (CIZ) daily stock file — see *Notes on the data*
+for the column names it uses.
 
 ---
 
 ## Attribution
-
-The discussion questions are adapted from Chapter 12 of
-
-> Gow, I. D., and T. Ding. 2024. *Empirical Research in Accounting: Tools and
-> Methods*. Chapman and Hall/CRC. <https://iangow.github.io/far_book/>
-
-which presents this exercise in Quarto using the `farr` package. This version
-restructures it as a plain R pipeline and adds the formal statistical tests and
-the by-decade extension.
 
 The pipeline structure follows
 [eweisbrod/project-template](https://github.com/eweisbrod/project-template).
