@@ -114,6 +114,17 @@ git config --global user.name "Your Name"
 git config --global user.email "you@ku.edu"
 ```
 
+To check whether you have already done this, run the same commands **without**
+the value — Git then prints the current setting instead of changing it:
+
+```bash
+git config --global user.name
+git config --global user.email
+```
+
+If they are set, you get your name and email back. If they are not, you get no
+output at all, which is easy to mistake for the command having failed.
+
 ### 3. Get the repository
 
 Pick a folder where you keep code — **not** inside Dropbox, OneDrive, or
