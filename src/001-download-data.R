@@ -43,12 +43,18 @@
 
 # Setup ------------------------------------------------------------------------
 
-# pacman installs anything missing, then loads everything.
-if (!require("pacman")) install.packages("pacman")
-
-pacman::p_load(dotenv, keyring, dbplyr, RPostgres, DBI, glue, arrow,
-               tictoc,
-               tidyverse)
+# renv has already installed these at the exact versions in renv.lock, so we
+# just load them. If any of these errors with "there is no package called ...",
+# run src/000-check-setup.R -- it will install everything the project needs.
+library(dotenv)
+library(keyring)
+library(dbplyr)
+library(RPostgres)
+library(DBI)
+library(glue)
+library(arrow)
+library(tictoc)
+library(tidyverse)
 
 # Helper functions: download_parquet(), write_parquet(), batch_run(),
 # project_setup(), trading_day_window(), ...

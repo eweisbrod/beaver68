@@ -17,7 +17,8 @@
 # What it checks:
 #   1. R version
 #   2. Working directory (are you in the project root?)
-#   3. Every R package the pipeline needs
+#   3. Every R package the pipeline needs (installed by renv from renv.lock)
+#   3b. Where those packages are stored, and whether disk is being wasted
 #   4. .env file and the three data directories
 #   5. WRDS credentials in your OS keyring
 #   6. A live connection to the WRDS server
@@ -84,12 +85,15 @@ if (file.exists("src/utils.R") && file.exists("README.md")) {
 
 # 3. R packages ----------------------------------------------------------------
 
-# pacman::p_load() installs anything missing and then loads it. We call it
-# here for the union of everything the five pipeline scripts need, so all
-# installation happens once, up front, rather than surprising you in the
-# middle of a run.
-
-if (!require("pacman", quietly = TRUE)) install.packages("pacman")
+# This project uses renv. The exact version of every package is recorded in
+# renv.lock, and renv::restore() below installs precisely those versions into
+# a private library inside the project folder. You therefore get the same
+# package versions as everyone else in the course, and nothing you install
+# here can disturb the R packages you use for your own work.
+#
+# The list below is for humans -- it says WHY each package is here. renv.lock
+# is the authoritative list, and it also pins the dozens of indirect
+# dependencies that these packages pull in.
 
 required_packages <- c(
   # Project plumbing
@@ -121,24 +125,79 @@ required_packages <- c(
   "flextable"      # tables inside the .docx
 )
 
-cat("\nChecking R packages (installing any that are missing)...\n\n")
+cat("\nChecking R packages (installing any that are missing)...\n")
+cat("The first run can take several minutes. Later runs are seconds.\n\n")
 
-# `install = TRUE` is the default but stated explicitly here so it is
-# obvious that this line may download packages the first time you run it.
-suppressPackageStartupMessages(
-  pacman::p_load(char = required_packages, install = TRUE)
-)
+# renv activates itself from .Rprofile when the project opens. If it is not
+# loaded, you almost certainly opened this .R file on its own rather than
+# opening beaver68.Rproj, and check 2 above will already have failed.
 
-missing <- required_packages[
-  !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
-]
-
-if (length(missing) == 0) {
-  report("OK", "R packages", paste(length(required_packages), "packages available"))
-} else {
+if (!requireNamespace("renv", quietly = TRUE)) {
   report("FAIL", "R packages",
-         paste0("could not install: ", paste(missing, collapse = ", "),
-                ". Try installing them one at a time to see the error."))
+         paste0("renv is not available, which means this project was not ",
+                "opened properly. Close RStudio and reopen it by ",
+                "double-clicking beaver68.Rproj."))
+} else {
+
+  # restore() reads renv.lock and installs exactly the recorded versions.
+  # It is safe to run repeatedly: if everything already matches the lockfile
+  # it does nothing at all.
+  restored <- tryCatch({
+    renv::restore(prompt = FALSE)
+    TRUE
+  }, error = function(e) structure(FALSE, msg = conditionMessage(e)))
+
+  missing <- required_packages[
+    !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
+  ]
+
+  if (isTRUE(restored) && length(missing) == 0) {
+    report("OK", "R packages",
+           paste(length(required_packages), "packages available (via renv)"))
+  } else if (length(missing) > 0) {
+    report("FAIL", "R packages",
+           paste0("missing after restore: ", paste(missing, collapse = ", "),
+                  ". Try renv::restore() on its own to see the full error."))
+  } else {
+    report("FAIL", "R packages", attr(restored, "msg"))
+  }
+}
+
+
+# 3b. Where packages are being stored ------------------------------------------
+
+# renv keeps one shared copy of each package in a "cache" and then links the
+# project's library to it, so ten people sharing a machine cost about as much
+# disk as one. That linking only works when the cache and the project sit on
+# the SAME DRIVE. If they do not, renv silently falls back to making full
+# copies -- everything still runs, but the project library balloons from a
+# few MB to a few hundred MB.
+#
+# On the department server this matters: the C: drive is small and shared, so
+# the project belongs on E: alongside the cache at E:/R_package_cache.
+#
+# Drive letters are a Windows idea, so this check is skipped elsewhere. On a
+# personal Mac or Windows laptop the default cache is already on the same
+# drive as your files and there is nothing to do.
+
+if (.Platform$OS.type == "windows" && requireNamespace("renv", quietly = TRUE)) {
+
+  drive_of <- function(path) toupper(substr(normalizePath(path, mustWork = FALSE), 1, 1))
+
+  cache_drive   <- drive_of(renv::paths$cache())
+  project_drive <- drive_of(getwd())
+
+  if (identical(cache_drive, project_drive)) {
+    report("OK", "Package cache",
+           paste0("cache and project both on ", project_drive, ": -- packages are shared, not copied"))
+  } else {
+    report("WARN", "Package cache",
+           paste0("cache is on ", cache_drive, ": but this project is on ",
+                  project_drive, ":. Everything will still run, but the project ",
+                  "will use several hundred MB instead of a few MB. On the ",
+                  "department server, clone the project to your E: drive ",
+                  "(E:/your-user-id/) to avoid this."))
+  }
 }
 
 

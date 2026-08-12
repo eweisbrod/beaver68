@@ -37,9 +37,17 @@
 
 # Setup ------------------------------------------------------------------------
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(dotenv, glue, arrow, fixest, modelsummary, tinytable,
-               officer, flextable, tidyverse)
+# Installed by renv at the versions pinned in renv.lock. If one of these is
+# missing, run src/000-check-setup.R.
+library(dotenv)
+library(glue)
+library(arrow)
+library(fixest)
+library(modelsummary)
+library(tinytable)
+library(officer)
+library(flextable)
+library(tidyverse)
 
 options(scipen = 999)
 

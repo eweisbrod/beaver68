@@ -36,10 +36,17 @@
 
 # Setup ------------------------------------------------------------------------
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(dotenv, lubridate, glue, arrow, duckdb, DBI, dbplyr,
-               tictoc,
-               tidyverse)
+# Installed by renv at the versions pinned in renv.lock. If one of these is
+# missing, run src/000-check-setup.R.
+library(dotenv)
+library(lubridate)
+library(glue)
+library(arrow)
+library(duckdb)
+library(DBI)
+library(dbplyr)
+library(tictoc)
+library(tidyverse)
 
 # The DuckDB progress bar floods the .Rout log with "DuckDB progress: 0%".
 # Journals that require an execution log (see the JAR Data and Code Sharing

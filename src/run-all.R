@@ -28,8 +28,9 @@
 
 # Setup ------------------------------------------------------------------------
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(dotenv)
+# Installed by renv at the versions pinned in renv.lock. If this errors,
+# run src/000-check-setup.R.
+library(dotenv)
 
 source("src/utils.R")  # provides batch_run()
 

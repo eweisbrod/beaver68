@@ -29,8 +29,13 @@
 
 # Setup ------------------------------------------------------------------------
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(dotenv, glue, arrow, scales, tidyverse)
+# Installed by renv at the versions pinned in renv.lock. If one of these is
+# missing, run src/000-check-setup.R.
+library(dotenv)
+library(glue)
+library(arrow)
+library(scales)
+library(tidyverse)
 
 options(scipen = 999)
 

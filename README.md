@@ -57,9 +57,24 @@ R must be **4.1 or later** — the scripts use the native pipe `|>` and the
 `\(x)` lambda shorthand, both introduced in 4.1. On R 4.0 you get a syntax
 error.
 
-You do **not** need to install R packages by hand. Every script begins with
-`pacman::p_load(...)`, which installs anything missing and then loads it. The
-full list is documented under [Dependencies](#dependencies) below.
+You do **not** need to install R packages by hand. This project uses
+[renv](https://rstudio.github.io/renv/): `src/000-check-setup.R` calls
+`renv::restore()`, which installs the exact package versions recorded in
+`renv.lock` into a private library inside the project folder. Everyone in the
+course therefore runs identical versions, and nothing installed here can
+disturb the R packages you use for your own work. The full list is documented
+under [Dependencies](#dependencies) below.
+
+**On the department server**, clone this project onto your `E:` drive
+(`E:\your-user-id\`), not `C:`. The server shares one package cache at
+`E:\R_package_cache`, and renv links to it rather than copying — but only
+within a single drive. Clone to `C:` and the project quietly uses several
+hundred MB instead of a few MB, on the drive that has the least room to spare.
+`000-check-setup.R` warns you if this happens.
+
+**On your own laptop**, there is nothing to configure. The project detects
+that the server's cache is absent and falls back to renv's normal per-user
+location.
 
 ### 2. Install Git
 
@@ -357,11 +372,13 @@ forward slashes throughout, which R accepts on Windows.
 
 ### R packages
 
-All installed automatically by `pacman::p_load()`. Grouped by what they do:
+All installed automatically by `renv::restore()` from `renv.lock`. The table
+below lists the direct dependencies and why each is here; `renv.lock` is the
+authoritative list and additionally pins every indirect dependency they pull
+in (151 packages in total).
 
 | Package | Used for | Scripts |
 |---|---|---|
-| `pacman` | installs and loads everything else | all |
 | `dotenv` | reads `.env` into environment variables | all |
 | `glue` | string interpolation, mostly file paths | all |
 | `keyring` | WRDS credentials in the OS credential store | 000, 001 |

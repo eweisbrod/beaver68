@@ -18,8 +18,9 @@
 #   writeup/writeup-template.docx
 # ==============================================================================
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(officer)
+# Installed by renv at the version pinned in renv.lock. If this errors,
+# run src/000-check-setup.R.
+library(officer)
 
 out_path <- file.path("writeup", "writeup-template.docx")
 

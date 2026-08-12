@@ -41,6 +41,10 @@ src/005-data-provenance.R   sample IDs + SHA256 inventory
 src/run-all.R               orchestrator, logs to log/
 src/utils.R                 helpers, from eweisbrod/project-template
 writeup/                    Word + LaTeX skeletons
+renv.lock                   pinned package versions (canonical; committed)
+.Rprofile                   points renv at the shared cache (committed)
+renv/                       renv machinery; only activate.R + settings.json
+                            are committed, library/ and staging/ are not
 ```
 
 Paths are relative to the project root. Scripts assume the working directory
@@ -64,11 +68,28 @@ and `password`), never in `.env` or in code.
 
 ## Dependencies
 
-The canonical package list lives in `required_packages` in
-`src/000-check-setup.R` and is documented for humans in the README's
-Dependencies section. **If you add a package to any script, add it in both
-places.** Individual scripts declare only what they use, via
-`pacman::p_load()`; 000 declares the union so installation happens once.
+The project uses **renv**. `renv.lock` is canonical: it pins the exact version
+of every direct and indirect dependency, and `src/000-check-setup.R` installs
+them with `renv::restore()`.
+
+`required_packages` in `src/000-check-setup.R` is a *human-readable* list that
+explains why each direct dependency is there, mirrored in the README's
+Dependencies section. It is not what drives installation.
+
+**If you add a package**: `library()` it in the script that uses it, add it to
+`required_packages` with a comment, add it to the README table, then run
+`renv::snapshot()` and commit the updated `renv.lock`. Skipping the snapshot
+means it works for you and fails for everyone else.
+
+Do not reintroduce `pacman::p_load()`. It installs unpinned versions into the
+renv library, silently drifting the project off its own lockfile.
+
+Packages are stored in a shared cache on the department server, set by
+`.Rprofile` before renv activates. `.Rprofile` is committed and degrades
+gracefully when `E:/R_package_cache` is absent, so the project still works on
+a student's own laptop. renv links the project library to the cache with
+hardlinks, which only work within one drive — hence the cache-location check
+in `000-check-setup.R`.
 
 ## Conventions
 
