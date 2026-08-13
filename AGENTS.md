@@ -84,6 +84,19 @@ means it works for you and fails for everyone else.
 Do not reintroduce `pacman::p_load()`. It installs unpinned versions into the
 renv library, silently drifting the project off its own lockfile.
 
+**Repository**: `renv.lock` records a *dated* Posit Package Manager snapshot,
+not CRAN. Plain CRAN keeps Windows binaries only for the current version of
+each package, so pinned versions become source-only as CRAN moves on, and
+source installs on Windows need Rtools. The dated P3M snapshot keeps the
+pinned versions installable as binaries indefinitely. Bump the date only when
+you deliberately re-snapshot, and keep it in step with `renv.lock`.
+
+**Ordering gotcha in `.Rprofile`**: `renv/activate.R` sets `options(repos)`
+from the lockfile when it runs. The repository line must therefore come
+*after* `source("renv/activate.R")`, while `RENV_PATHS_CACHE` must come
+*before* it — renv reads the cache path at activation. Get this backwards and
+the setting is silently discarded with no error.
+
 Packages are stored in a shared cache on the department server, set by
 `.Rprofile` before renv activates. `.Rprofile` is committed and degrades
 gracefully when `E:/R_package_cache` is absent, so the project still works on
