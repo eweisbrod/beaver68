@@ -65,7 +65,7 @@ course therefore runs identical versions, and nothing installed here can
 disturb the R packages you use for your own work. The full list is documented
 under [Dependencies](#dependencies) below.
 
-**On the department server**, clone this project onto your `E:` drive
+**If you work on the research server**, clone this project onto your `E:` drive
 (`E:\your-user-id\`), not `C:`. The server shares one package cache at
 `E:\R_package_cache`, and renv links to it rather than copying — but only
 within a single drive. Clone to `C:` and the project quietly uses several
@@ -303,14 +303,8 @@ The decade split is already wired end to end, so use it as your worked
 example. To partition on something else, change these four places:
 
 1. **`src/002-transform-data.R`**, in the panel-construction block: add your
-   variable alongside `decade`. Anything you can compute from the columns
-   already on the panel (`ret`, `vol`, `prc`, `shrout`, `mve`, `year`, …) or
-   join in from `fundq-raw.parquet` (`saleq`, `ibq`, `atq`, …) works. Keep it
-   inside the `mutate()` that runs in DuckDB.
+   variable alongside `decade`.  Keep it inside the `mutate()` that runs in DuckDB.
 
-   ```r
-   mutate(my_group = case_when(<your rule> ~ "High", TRUE ~ "Low"))
-   ```
 
 2. **Same script**, in the `decade_summary` block: swap `decade` for
    `my_group` in the `group_by()`, and write the result to a new parquet
