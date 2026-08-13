@@ -765,9 +765,24 @@ project_setup <- function(force = FALSE) {
     }
   }
   wrds_user <- trimws(readline("WRDS username: "))
-  wrds_pw   <- trimws(readline("WRDS password: "))
   keyring::key_set_with_value("wrds", "username", password = wrds_user)
-  keyring::key_set_with_value("wrds", "password", password = wrds_pw)
+
+  # readline() ECHOES what you type. That is fine for a username, but a
+  # password typed at a readline() prompt appears in plain text on screen and
+  # stays there in the console scrollback for anyone to read. Do not use
+  # readline() here -- particularly if you are demonstrating on a projector.
+  #
+  # askpass() masks the input instead: a hidden-text dialog in RStudio, hidden
+  # characters in a terminal. It arrives with keyring, so it is always present.
+  wrds_pw <- askpass::askpass("WRDS password: ")
+
+  if (is.null(wrds_pw) || !nzchar(trimws(wrds_pw))) {
+    cat("\nNo password entered -- username saved, password was not.\n")
+    cat("Set it later with: keyring::key_set('wrds', 'password')\n\n")
+    return(invisible())
+  }
+
+  keyring::key_set_with_value("wrds", "password", password = trimws(wrds_pw))
 }
 
 
