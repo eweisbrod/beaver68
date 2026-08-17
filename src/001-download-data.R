@@ -17,6 +17,12 @@
 #
 #   plus the CCM link table to get from Compustat's gvkey to CRSP's permno.
 #
+# Based on:
+#   The choice of tables and the sample screens follow Chapter 12 of
+#   Gow, I. D., and T. Ding. 2024. Empirical Research in Accounting: Tools
+#   and Methods. Chapman & Hall/CRC. Read the chapter alongside this file:
+#   https://iangow.github.io/far_book/beaver68.html
+#
 # Inputs:
 #   WRDS PostgreSQL endpoint. Credentials come from your OS keyring
 #   (service `wrds`, keys `username` and `password`), stored once by

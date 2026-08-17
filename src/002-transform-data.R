@@ -12,6 +12,13 @@
 #   ABNORMALLY HIGH on day 0 relative to the surrounding non-announcement
 #   days -- and each announcement acts as its own control.
 #
+# Based on:
+#   The event-window construction -- the +/-20 trading day window, the
+#   trading-day calendar, and mapping each announcement forward onto it --
+#   follows Chapter 12 of Gow, I. D., and T. Ding. 2024. Empirical Research
+#   in Accounting: Tools and Methods. Chapman & Hall/CRC. Read the chapter
+#   alongside this file: https://iangow.github.io/far_book/beaver68.html
+#
 # Inputs (from RAW_DATA_DIR):
 #   fundq-raw.parquet
 #   ccm-link.parquet

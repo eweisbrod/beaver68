@@ -8,6 +8,11 @@ design of
 
 on modern WRDS data, and write up what you find.
 
+The design followed here comes from Chapter 12 of Gow and Ding, *Empirical
+Research in Accounting: Tools and Methods*, which is
+[free to read online](https://iangow.github.io/far_book/beaver68.html) and is
+worth reading alongside this assignment. See [Attribution](#attribution).
+
 Beaver asked whether earnings announcements convey new information to the
 market. His evidence was that in the week of an annual earnings announcement,
 both **trading volume** and the **variability of stock returns** spike relative
@@ -422,9 +427,30 @@ for the column names it uses.
 
 ## Attribution
 
+This project began from **Chapter 12 of Gow and Ding**, which works through a
+replication of Beaver (1968) in R against WRDS data. The research design here —
+the ±20-trading-day event window, mapping announcement dates forward onto the
+CRSP trading calendar, and measuring volume as turnover against a market
+benchmark — follows that chapter. Read it alongside this repository:
+
+> Gow, I. D., and T. Ding. 2024. *Empirical Research in Accounting: Tools and
+> Methods*. Boca Raton, FL: Chapman & Hall/CRC. ISBN 9781032586502.
+
+- Chapter 12, "Beaver (1968)": <https://iangow.github.io/far_book/beaver68.html>
+- The full book is free to read online: <https://iangow.github.io/far_book/>
+
+The book is worth your time well beyond this assignment. It is the best
+available treatment of how empirical accounting research is actually done with
+modern tools, and several later chapters cover designs you will meet in the
+rest of the course.
+
 The pipeline structure follows
 [eweisbrod/project-template](https://github.com/eweisbrod/project-template).
 
 ## License
 
-[CC-BY-4.0](LICENSE). Fork and reuse with attribution.
+[Creative Commons Attribution 4.0 International](LICENSE) (CC BY 4.0) — the
+same license as
+[eweisbrod/project-template](https://github.com/eweisbrod/project-template)
+and [eweisbrod/example-project](https://github.com/eweisbrod/example-project).
+Fork and reuse with attribution.

@@ -84,6 +84,11 @@ doc <- read_docx() |>
     "you handle announcements that fall on non-trading days. Be explicit about",
     "where you depart from Beaver -- the DESIGN CHOICE comments at the top of",
     "src/002-transform-data.R flag each departure."), style = "Normal") |>
+  body_add_par(paste(
+    "The design implemented here follows Gow and Ding (2024), Chapter 12.",
+    "Cite it when you describe the event-window construction. The chapter is",
+    "free online at https://iangow.github.io/far_book/beaver68.html and is",
+    "worth reading before you write this section."), style = "Normal") |>
   add_placeholder("Paste Table 1: Sample selection, from output/tables.docx") |>
 
   body_add_par("3. Results", style = "heading 1") |>
@@ -177,7 +182,10 @@ doc <- doc |>
     "(2): 103-129."), style = "Normal") |>
   body_add_par(paste(
     "Beaver, W. H. 1968. The information content of annual earnings",
-    "announcements. Journal of Accounting Research 6: 67-92."), style = "Normal")
+    "announcements. Journal of Accounting Research 6: 67-92."), style = "Normal") |>
+  body_add_par(paste(
+    "Gow, I. D., and T. Ding. 2024. Empirical Research in Accounting: Tools and",
+    "Methods. Boca Raton, FL: Chapman & Hall/CRC."), style = "Normal")
 
 print(doc, target = out_path)
 

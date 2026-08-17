@@ -8,6 +8,13 @@ A teaching replication package for ACCT 932 (PhD seminar, University of
 Kansas). Students re-run the research design of Beaver (1968), "The
 Information Content of Annual Earnings Announcements," on modern WRDS data.
 
+**The research design descends from Chapter 12 of Gow and Ding (2024),
+*Empirical Research in Accounting: Tools and Methods*
+(<https://iangow.github.io/far_book/beaver68.html>).** That attribution
+appears in `README.md`, in the header of `src/001`, `src/002`, and `src/003`,
+and in both write-up templates. **Do not remove it.** If you add a step that
+also derives from the chapter, credit it there too.
+
 **The audience is first- and second-year accounting PhD students**, many of
 whom are new to R and to WRDS. Code here is read far more often than it is
 run. Comments explain *why* a step exists, not what the syntax does. When

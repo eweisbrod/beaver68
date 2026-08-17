@@ -11,6 +11,12 @@
 #   the x-axis is trading days relative to the announcement, and the story
 #   is whether day 0 stands out from its neighbours.
 #
+# Based on:
+#   The plots follow Chapter 12 of Gow, I. D., and T. Ding. 2024. Empirical
+#   Research in Accounting: Tools and Methods. Chapman & Hall/CRC, which
+#   builds the same two figures. Read the chapter alongside this file:
+#   https://iangow.github.io/far_book/beaver68.html
+#
 # Inputs (from DATA_DIR):
 #   event-summary.parquet    relative_td x year
 #   decade-summary.parquet   relative_td x decade
