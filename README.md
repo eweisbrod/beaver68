@@ -266,6 +266,12 @@ recompiling updates every number automatically. Compile with
 The LaTeX template carries a required preamble block for the generated tables
 (they use the `tabularray` package). Do not delete it.
 
+The two skeletons say the same thing because the Word one is generated from the
+LaTeX one. If you are maintaining this course rather than taking it: edit
+`writeup/writeup-template.tex`, then run `Rscript writeup/make-writeup-docx.R`
+to rebuild the `.docx`. Editing the `.docx` by hand accomplishes nothing, since
+the next build overwrites it.
+
 ---
 
 ## What to submit
@@ -273,8 +279,9 @@ The LaTeX template carries a required preamble block for the generated tables
 1. Your write-up, as **PDF or Word**, uploaded to Canvas.
 2. Your **code**, including whatever you modified.
 
-The discussion questions are in both skeletons. Several ask you to change a
-parameter and re-run — that is the point of the exercise, so budget time for it.
+Your write-up must include the *Extension: your own partition* section — the
+variable you chose, your hypothesis, and what you found. That section, not the
+replication of Beaver, is where most of the credit is.
 
 ---
 
@@ -316,13 +323,20 @@ example. To partition on something else, change these four places:
    file.
 
 3. **`src/003-figures.R`**: copy the `fig3` block, point it at your summary,
-   and change `colour = decade` to `colour = my_group`.
+   and change `colour = decade` to `colour = my_group`. Save it as
+   **`fig6-my-partition`** — both write-up templates expect that name.
 
 4. **`src/004-analyze-data.R`**: copy the by-decade regression and replace
-   `event_day:decade` with `event_day:my_group`.
+   `event_day:decade` with `event_day:my_group`. Write it to
+   **`my-partition.tex`** — likewise.
 
 Two warnings from the syllabus: **firm size is off limits**, and you must get
 your variable approved before you build on it.
+
+Both write-up skeletons have a section built around this work — *Extension:
+your own partition* — covering the variable and why you chose it, your
+hypothesis, what you found, and the most serious objection to it. It is the
+section that carries the most weight, so budget your time accordingly.
 
 ---
 

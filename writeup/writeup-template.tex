@@ -39,6 +39,24 @@
 % first need: tinytex::tlmgr_install("chicago")
 \bibliographystyle{plainnat}
 
+\usepackage{xcolor}
+
+% -----------------------------------------------------------------------------
+% WRITING PROMPTS
+%
+% \guidance{} holds the instructions telling you what to write in a
+% section. It renders as grey italic text, so a prompt you have not yet
+% answered is obvious on the page. Delete each one as you replace it with
+% your own writing.
+%
+% These are body text rather than % comments because this file is the
+% single source for the Word version too: writeup/make-writeup-docx.R
+% converts this document, and a LaTeX comment would not survive that
+% conversion. Anything a student needs to READ belongs in \guidance{};
+% anything only a LaTeX user needs belongs in a % comment.
+% -----------------------------------------------------------------------------
+\newcommand{\guidance}[1]{{\itshape\color{gray}#1\par\medskip}}
+
 % -----------------------------------------------------------------------------
 % REQUIRED PREAMBLE FOR THE GENERATED TABLES -- do not delete.
 %
@@ -71,7 +89,8 @@
 
 \begin{abstract}
 \noindent
-% One paragraph. What did you do, and what did you find? Write this LAST.
+\guidance{One paragraph. What did you do, and what did you find? Write
+this last.}
 Replace this with a short abstract.
 \end{abstract}
 
@@ -80,8 +99,8 @@ Replace this with a short abstract.
 \section{Introduction}
 % =============================================================================
 
-% What question did Beaver ask, why did it matter in 1968, and what does
-% your replication do? Two or three paragraphs is plenty.
+\guidance{What question did Beaver ask, why did it matter in 1968, and
+what does your replication do? Two or three paragraphs is plenty.}
 
 Replace this text.
 
@@ -90,18 +109,19 @@ Replace this text.
 \section{Research design}
 % =============================================================================
 
-% Describe the design in prose: the sample, the event window, the two
-% outcome measures, and how you handle announcements that fall on
-% non-trading days.
-%
-% BE EXPLICIT about where you depart from Beaver. The departures are the
-% interesting part, and the "DESIGN CHOICE" comments in
-% src/002-transform-data.R flag each one.
-%
-% The design implemented here follows \citet{gowding2024}, Chapter 12 --
-% cite it when you describe the event-window construction. The chapter is
-% free online at https://iangow.github.io/far_book/beaver68.html and is
-% worth reading before you write this section.
+\guidance{Describe the design in prose: the sample, the event window, the
+two outcome measures, and how you handle announcements that fall on
+non-trading days.}
+
+\guidance{Be explicit about where you depart from Beaver. The departures
+are the interesting part, and the ``DESIGN CHOICE'' comments in
+src/002-transform-data.R flag each one.}
+
+\guidance{The design implemented here follows \citet{gowding2024},
+Chapter 12 -- cite it when you describe the event-window construction.
+The chapter is free online at
+\url{https://iangow.github.io/far_book/beaver68.html} and is worth
+reading before you write this section.}
 
 Replace this text.
 
@@ -119,6 +139,8 @@ Replace this text.
 \subsection{Descriptive statistics}
 
 \input{../output/descriptives.tex}
+
+\guidance{Interpret the table in a paragraph.}
 
 Replace this text with a paragraph interpreting the table.
 
@@ -144,9 +166,9 @@ Replace this text.
 
 \subsection{Formal statistical tests}
 
-% Beaver assessed significance informally. This is the modern version --
-% explain what the specification does and why the fixed effects and
-% clustering are there.
+\guidance{Beaver assessed significance informally. This is the modern
+version -- explain what the specification does and why the fixed effects
+and the clustered standard errors are there.}
 
 \input{../output/main-results-returns.tex}
 
@@ -169,13 +191,83 @@ Replace this text.
 
 
 % =============================================================================
+\section{Extension: your own partition}
+% =============================================================================
+
+\guidance{This section is the heart of the assignment. Everything above
+reproduces a result that is already known; this is where you ask a
+question of your own. Weight your effort accordingly -- this section
+should be the longest in the document.}
+
+\guidance{The by-decade split above is your worked example: it replicates
+Figure 1 of \citet{dechow2014}. Here you do the same thing with a
+partitioning variable you choose yourself. Two constraints from the
+syllabus: firm size is off limits, and your variable must be approved
+before you build on it. README.md, under ``Splitting the sample by your
+own variable'', lists the four places in the pipeline you need to
+change.}
+
+\subsection{The variable, and why you chose it}
+
+\guidance{Name the variable and define it precisely -- the exact
+construction, not just the concept. Then give the economic reason to
+expect the announcement reaction to differ across it. What is the
+mechanism? Cite prior work where it exists.}
+
+Replace this text.
+
+\subsection{Hypothesis}
+
+\guidance{State a directional prediction, and state it before you look at
+your figure. Which group should show the larger announcement-window
+reaction, and why? Then say what pattern would count as evidence against
+you -- a prediction that no result could contradict is not a
+hypothesis.}
+
+Replace this text.
+
+\subsection{What you found}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fig6-my-partition.pdf}
+\caption{Announcement-period reaction, partitioned by your own variable.}
+\label{fig:mypartition}
+\end{figure}
+
+\input{../output/my-partition.tex}
+
+\guidance{Read your own figure honestly. Does it match the prediction you
+just made? Be specific about magnitude, not only direction: ``larger'' is
+not a finding, ``roughly twice the baseline elevation, against 1.4 times
+for the other group'' is. If the prediction failed, say so plainly and
+work out why. A sharp prediction that fails is worth more than a vague
+one that could not.}
+
+Replace this text.
+
+\subsection{The obvious objection}
+
+\guidance{One paragraph. What is the most serious alternative explanation
+for what you found, and what test would separate it from yours? You are
+not required to run that test -- you are required to know what it is.}
+
+Replace this text.
+
+
+% =============================================================================
 \section{Discussion questions}
 % =============================================================================
 
-% Answer each question in a paragraph or two. These are graded on the
-% quality of the reasoning, not on length.
+\guidance{Answer each question in a paragraph or two. These are graded on
+the quality of the reasoning, not on length.}
 
-\subsection*{1. Research questions}
+% Numbered by the enumerate environment rather than by hand, so that
+% cutting or adding a question renumbers the rest by itself -- in the
+% Word version too. Do not type numbers into the \textbf{} titles.
+\begin{enumerate}
+
+\item \textbf{Research questions.}
 How do the research questions of \citet{beaver1968} and
 \citet{ballbrown1968} differ? If there is overlap, does one paper provide
 superior evidence, or are they just different?
@@ -184,7 +276,7 @@ superior evidence, or are they just different?
 
 \medskip
 
-\subsection*{2. Data differences}
+\item \textbf{Data differences.}
 What differences are there in the data (sample period, frequency, number
 of firms) used by \citet{beaver1968} relative to \citet{ballbrown1968}?
 Why do these differences exist?
@@ -193,7 +285,7 @@ Why do these differences exist?
 
 \medskip
 
-\subsection*{3. Price versus volume}
+\item \textbf{Price versus volume.}
 Which is the better variable for Beaver's research question---price or
 volume? Is it helpful to have both?
 
@@ -201,55 +293,7 @@ volume? Is it helpful to have both?
 
 \medskip
 
-\subsection*{4. How much information?}
-\citet{ballshivakumar2008} argue earnings announcements provide
-relatively little of the market's total information. If volume measures
-information content, what does your Figure~\ref{fig:volume} imply about
-the proportion of information conveyed during announcement periods? Can
-that be reconciled with \citet{beaver1968}?
-
-\medskip\noindent\textit{Your answer:}
-
-\medskip
-
-\subsection*{5. Statistical significance}
-\citet{beaver1968} discusses significance informally (pp.~77, 81--82).
-Why did he use that approach? Compare it to the regression table in
-Section~\ref{sec:results} --- what does the formal test buy you, and what
-assumptions does it add?
-
-\medskip\noindent\textit{Your answer:}
-
-\medskip
-
-\subsection*{6. Why plots?}
-The primary analyses in \citet{beaver1968} are plots. The cost of
-producing plots has collapsed since 1968, yet we rarely see primary
-analyses presented as plots today. Why?
-
-\medskip\noindent\textit{Your answer:}
-
-\medskip
-
-\subsection*{7. Overgeneralization}
-After reading \citet{bamber2000}, do Beaver's sample selection criteria
-still seem reasonable? Do your results support the generalizations later
-researchers made from \citet{beaver1968}, or do the concerns of
-\citet{bamber2000} remain applicable?
-
-\medskip\noindent\textit{Your answer:}
-
-\medskip
-
-\subsection*{8. Your design choices}
-Your replication makes several measurement and design choices that differ
-from Beaver's. Identify them. Do you expect them to materially affect the
-tenor of the results? Change at least one of the parameters at the top of
-\texttt{src/002-transform-data.R}, re-run, and report what happens.
-
-\medskip\noindent\textit{Your answer:}
-
-\medskip
+\end{enumerate}
 
 
 % =============================================================================
