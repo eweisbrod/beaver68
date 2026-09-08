@@ -123,7 +123,7 @@ doc <- read_docx() |>
   body_add_par("", style = "Normal")
 
 doc <- doc |>
-  add_question(1, "Sample selection", paste(
+  add_question(1, "Research questions", paste(
     "How do the research questions of Beaver (1968) and Ball and Brown (1968)",
     "differ? If there is overlap, does one paper provide superior evidence, or",
     "are they just different?")) |>
