@@ -58,6 +58,59 @@
 \newcommand{\guidance}[1]{{\itshape\color{gray}#1\par\medskip}}
 
 % -----------------------------------------------------------------------------
+% GENERATED RESULTS, AND WHAT HAPPENS WHEN THEY ARE MISSING
+%
+% This file ships before you have run anything, so output/ is empty and
+% every table and figure below is absent. Pulling a missing file in
+% directly aborts the compile with "File not found", which is a poor way
+% to meet a template. So each result goes through \resulttable or
+% \resultgraphic, which check whether the file is there and drop in a
+% visible placeholder when it is not.
+%
+% The document therefore always compiles. An unfilled slot shows up as a
+% framed box on the page saying what is missing, rather than as an error
+% you have to decode. Run src/run-all.R and recompile and the real
+% tables and figures replace the boxes.
+%
+% Second argument is the human name of the result. It is also what
+% writeup/make-writeup-docx.R turns into the "paste this here"
+% instruction in the Word version, so keep it descriptive.
+% -----------------------------------------------------------------------------
+\newcommand{\missingresult}[2]{%
+  \begin{center}%
+  \setlength{\fboxsep}{10pt}%
+  \fbox{\parbox{0.75\textwidth}{%
+    \centering
+    \textbf{[ #1 -- not generated yet ]}\par\medskip
+    {\small\itshape Expected \texttt{#2}. Run \texttt{src/run-all.R},
+     then recompile.}%
+  }}%
+  \end{center}%
+}
+
+% \resulttable{file stem}{human name}
+%
+% NOTE: each generated .tex file is a COMPLETE, self-contained table --
+% it brings its own \begin{table}, \centering, and \caption. So it is
+% \input{} bare. Wrapping it in another \begin{table} produces the error
+% "LaTeX Error: Not in outer par mode."
+\newcommand{\resulttable}[2]{%
+  \IfFileExists{../output/#1.tex}%
+    {\input{../output/#1.tex}}%
+    {\missingresult{#2}{output/#1.tex}}%
+}
+
+% \resultgraphic{file stem}{human name}
+%
+% Goes INSIDE a figure environment, so that the \caption and \label stay
+% in plain LaTeX where you can edit them normally.
+\newcommand{\resultgraphic}[2]{%
+  \IfFileExists{../output/#1.pdf}%
+    {\includegraphics[width=0.85\textwidth]{../output/#1.pdf}}%
+    {\missingresult{#2}{output/#1.pdf}}%
+}
+
+% -----------------------------------------------------------------------------
 % REQUIRED PREAMBLE FOR THE GENERATED TABLES -- do not delete.
 %
 % The .tex tables written by src/004-analyze-data.R are produced by the
@@ -125,11 +178,7 @@ reading before you write this section.}
 
 Replace this text.
 
-% NOTE: each generated .tex file is a COMPLETE, self-contained table --
-% it brings its own \begin{table}, \centering, and \caption. So you
-% \input{} it bare. Wrapping it in another \begin{table} produces the
-% error "LaTeX Error: Not in outer par mode."
-\input{../output/sample-selection.tex}
+\resulttable{sample-selection}{Table 1: Sample selection}
 
 
 % =============================================================================
@@ -138,7 +187,7 @@ Replace this text.
 
 \subsection{Descriptive statistics}
 
-\input{../output/descriptives.tex}
+\resulttable{descriptives}{Table 2: Descriptive statistics}
 
 \guidance{Interpret the table in a paragraph.}
 
@@ -148,7 +197,7 @@ Replace this text with a paragraph interpreting the table.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{fig1-volume.pdf}
+\resultgraphic{fig1-volume}{Figure 1: Trading volume}
 \caption{Trading volume around annual earnings announcements. Compare to
          Figure 1 of \citet{beaver1968}.}
 \label{fig:volume}
@@ -156,7 +205,7 @@ Replace this text with a paragraph interpreting the table.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{fig2-return-variability.pdf}
+\resultgraphic{fig2-return-variability}{Figure 2: Return variability}
 \caption{Return variability around annual earnings announcements. Compare
          to Figure 6 of \citet{beaver1968}.}
 \label{fig:variability}
@@ -170,9 +219,9 @@ Replace this text.
 version -- explain what the specification does and why the fixed effects
 and the clustered standard errors are there.}
 
-\input{../output/main-results-returns.tex}
+\resulttable{main-results-returns}{Table 3: Return variability}
 
-\input{../output/main-results-turnover.tex}
+\resulttable{main-results-turnover}{Table 4: Trading volume (turnover)}
 
 Replace this text.
 
@@ -180,12 +229,12 @@ Replace this text.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{fig3-turnover-by-decade.pdf}
+\resultgraphic{fig3-turnover-by-decade}{Figure 3: Turnover by decade}
 \caption{Median share turnover around annual earnings announcements, by decade.}
 \label{fig:turnover}
 \end{figure}
 
-\input{../output/by-decade.tex}
+\resulttable{by-decade}{Table 5: By decade}
 
 Replace this text.
 
@@ -230,12 +279,12 @@ Replace this text.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{fig6-my-partition.pdf}
+\resultgraphic{fig6-my-partition}{Figure 4: Your own partition}
 \caption{Announcement-period reaction, partitioned by your own variable.}
 \label{fig:mypartition}
 \end{figure}
 
-\input{../output/my-partition.tex}
+\resulttable{my-partition}{Table 6: Your own partition}
 
 \guidance{Read your own figure honestly. Does it match the prediction you
 just made? Be specific about magnitude, not only direction: ``larger'' is

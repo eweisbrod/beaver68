@@ -10,11 +10,16 @@
 #   overwrites it.
 #
 #   The two documents have to differ in exactly one respect. LaTeX pulls
-#   each generated table in with \input{} and each figure with
-#   \includegraphics{}, so a recompile updates every number by itself.
-#   Word can do neither, so its users paste from output/tables.docx
-#   instead. This script performs that one swap, prepends the paste
-#   instructions Word users need, and hands the rest to pandoc unchanged.
+#   each generated table and figure in from output/, so a recompile
+#   updates every number by itself. Word can do neither, so its users
+#   paste from output/tables.docx instead. This script performs that one
+#   swap, prepends the paste instructions Word users need, and hands the
+#   rest to pandoc unchanged.
+#
+#   Every result in the .tex is written as \resulttable{stem}{name} or
+#   \resultgraphic{stem}{name}. The name in the second argument is what
+#   becomes the Word paste instruction, so this script needs no list of
+#   its own -- adding a result to the .tex is the only step.
 #
 # Requirements:
 #   pandoc >= 3, on PATH. Check with: pandoc --version
@@ -39,31 +44,10 @@ tex_path    <- file.path(writeup_dir, "writeup-template.tex")
 bib_path    <- file.path(writeup_dir, "references.bib")
 docx_path   <- file.path(writeup_dir, "writeup-template.docx")
 
-
-# --- what each generated file becomes in the Word version ---------------------
-
-# Keys are the bare file names the pipeline writes into OUTPUT_DIR; values
-# are the instruction a Word user reads in place of the table or figure.
-# Adding a table or figure to the .tex means adding a line here -- the
-# check below refuses to build until you do, rather than silently dropping
-# it from the Word version.
-PASTE_LABELS <- c(
-  "sample-selection"      = "Table 1: Sample selection",
-  "descriptives"          = "Table 2: Descriptive statistics",
-  "main-results-returns"  = "Table 3: Return variability",
-  "main-results-turnover" = "Table 4: Trading volume (turnover)",
-  "by-decade"             = "Table 5: By decade",
-  "fig1-volume"           = "Figure 1: Trading volume",
-  "fig2-return-variability" = "Figure 2: Return variability",
-  "fig3-turnover-by-decade" = "Figure 3: Turnover by decade",
-
-  # The extension section. Unlike everything above, the student writes
-  # these two files -- the pipeline does not produce them. The names are
-  # a convention the template depends on; README.md tells students to
-  # save their partition figure and table under exactly these names.
-  "fig6-my-partition"     = "Figure 4: Your own partition",
-  "my-partition"          = "Table 6: Your own partition"
-)
+# Both macros take two brace-free arguments: the output file stem, then
+# the human name. Captured as \1 and \2 below.
+RE_TABLE   <- "\\\\resulttable\\{([^{}]+)\\}\\{([^{}]+)\\}"
+RE_GRAPHIC <- "\\\\resultgraphic\\{([^{}]+)\\}\\{([^{}]+)\\}"
 
 
 # --- Word-only front matter ---------------------------------------------------
@@ -91,19 +75,21 @@ PASTEBOX_DEF <- "\\newcommand{\\pastebox}[1]{\\medskip\\noindent\\textbf{[ #1 ]}
 
 # --- helpers ------------------------------------------------------------------
 
-# Pull the bare names out of every \input{../output/NAME.tex} in the
-# source. Returns a character vector, possibly empty.
-find_inputs <- function(tex) {
-  m <- gregexpr("\\\\input\\{\\.\\./output/([^}]+)\\.tex\\}", tex, perl = TRUE)
-  hits <- regmatches(tex, m)[[1]]
-  sub("^\\\\input\\{\\.\\./output/(.+)\\.tex\\}$", "\\1", hits)
+# Drop whole-line LaTeX comments. Necessary because the .tex documents
+# its own macros in comments -- a line reading "% \resulttable{file
+# stem}{human name}" matches the pattern below and would otherwise be
+# counted and converted as though it were a real result. Only lines that
+# START with % are removed, so a trailing % (which suppresses a newline
+# and is load-bearing inside the macro definitions) is left alone.
+strip_comments <- function(txt) {
+  lines <- strsplit(txt, "\n", fixed = TRUE)[[1]]
+  paste(lines[!grepl("^\\s*%", lines)], collapse = "\n")
 }
 
-# Pull the bare names out of every \includegraphics[...]{NAME.pdf}.
-find_graphics <- function(tex) {
-  m <- gregexpr("\\\\includegraphics(\\[[^]]*\\])?\\{([^}]+)\\.pdf\\}", tex, perl = TRUE)
-  hits <- regmatches(tex, m)[[1]]
-  sub("^.*\\{(.+)\\.pdf\\}$", "\\1", hits)
+# Count how many times a pattern matches, for the before-and-after check.
+count_matches <- function(pattern, txt) {
+  m <- gregexpr(pattern, txt, perl = TRUE)[[1]]
+  if (length(m) == 1 && m[1] == -1) 0L else length(m)
 }
 
 # Read a .docx back as plain text, by unzipping word/document.xml and
@@ -132,24 +118,19 @@ if (nchar(Sys.which("pandoc")) == 0) {
 }
 
 tex <- paste(readLines(tex_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+tex <- strip_comments(tex)
 
-# Every generated file referenced by the .tex must have a Word label. An
-# unmapped one would vanish from the .docx with no visible trace, so stop
-# instead.
-referenced <- c(find_inputs(tex), find_graphics(tex))
-unmapped   <- setdiff(referenced, names(PASTE_LABELS))
-if (length(unmapped) > 0) {
-  stop("These generated files appear in ", tex_path, " but have no Word\n",
-       "paste label. Add them to PASTE_LABELS in this script:\n",
-       paste0("  ", unmapped, collapse = "\n"), call. = FALSE)
-}
+n_tables   <- count_matches(RE_TABLE, tex)
+n_graphics <- count_matches(RE_GRAPHIC, tex)
+n_expected <- n_tables + n_graphics
 
-# The reverse case is harmless but worth reporting: a label nobody uses
-# usually means a table was renamed or dropped in the .tex.
-unused <- setdiff(names(PASTE_LABELS), referenced)
-if (length(unused) > 0) {
-  message("Note: PASTE_LABELS entries not referenced by the .tex: ",
-          paste(unused, collapse = ", "))
+# A .tex with no results at all means the macros were renamed or the file
+# is not the one we think it is. Better to say so than to ship a Word
+# template with every table silently absent.
+if (n_expected == 0) {
+  stop("Found no \\resulttable{} or \\resultgraphic{} calls in ", tex_path,
+       ".\nEither the file is wrong or the macros were renamed -- if the",
+       " latter,\nupdate RE_TABLE and RE_GRAPHIC in this script.", call. = FALSE)
 }
 
 
@@ -157,22 +138,23 @@ if (length(unused) > 0) {
 
 converted <- tex
 
-# Tables: the whole \input{} line becomes a paste instruction.
-for (nm in find_inputs(converted)) {
-  converted <- gsub(
-    paste0("\\input{../output/", nm, ".tex}"),
-    paste0("\\pastebox{Paste ", PASTE_LABELS[[nm]], ", from output/tables.docx}"),
-    converted, fixed = TRUE)
-}
+# Tables live in output/tables.docx, so the instruction names it.
+converted <- gsub(RE_TABLE,
+                  "\\\\pastebox{Paste \\2, from output/tables.docx}",
+                  converted, perl = TRUE)
 
-# Figures: only the \includegraphics is swapped, so the surrounding
-# figure environment and its \caption still reach Word.
-for (nm in find_graphics(converted)) {
-  converted <- gsub(
-    paste0("\\\\includegraphics(\\[[^]]*\\])?\\{", nm, "\\.pdf\\}"),
-    paste0("\\\\pastebox{Paste ", PASTE_LABELS[[nm]], "}"),
-    converted, perl = TRUE)
-}
+# Figures are pasted from the .png files, and the surrounding figure
+# environment keeps its \caption, so the instruction stays short.
+converted <- gsub(RE_GRAPHIC,
+                  "\\\\pastebox{Paste \\2}",
+                  converted, perl = TRUE)
+
+# The macro definitions are dead weight once every call site is gone, and
+# \IfFileExists is not something pandoc needs to reason about.
+# (?s) so that . spans the newlines inside a multi-line definition; the
+# lazy .*? then stops at the first line consisting of a bare closing brace.
+converted <- gsub("(?s)\\\\newcommand\\{\\\\(resulttable|resultgraphic|missingresult)\\}.*?\\n\\}\\n",
+                  "", converted, perl = TRUE)
 
 # Define \pastebox, then add the Word-only front matter after \maketitle.
 converted <- sub("\\begin{document}",
@@ -181,6 +163,15 @@ converted <- sub("\\begin{document}",
 converted <- sub("\\maketitle",
                  paste0("\\maketitle\n\n", HOW_TO_USE),
                  converted, fixed = TRUE)
+
+# Nothing may survive the swap: a leftover call would reach pandoc, which
+# does not know the macro, and the result would vanish from the Word file.
+leftover <- count_matches(RE_TABLE, converted) + count_matches(RE_GRAPHIC, converted)
+if (leftover > 0) {
+  stop(leftover, " \\resulttable/\\resultgraphic call(s) were not converted.\n",
+       "An argument probably contains braces, which the patterns do not allow.",
+       call. = FALSE)
+}
 
 tmp_tex <- tempfile(fileext = ".tex")
 on.exit(unlink(tmp_tex), add = TRUE)
@@ -219,17 +210,19 @@ if (!grepl("Beaver (1968)", body, fixed = TRUE)) {
 
 # A literal backslash command in the body means a macro survived
 # unexpanded instead of rendering.
-leaked <- grep("\\\\(pastebox|guidance|citet|input)\\b", body, value = TRUE, perl = TRUE)
+leaked <- grep("\\\\(pastebox|guidance|citet|resulttable|resultgraphic)\\b",
+               body, value = TRUE, perl = TRUE)
 if (length(leaked) > 0) {
   stop("Unexpanded LaTeX reached the Word output. First instance:\n  ",
        substr(leaked[1], 1, 200), call. = FALSE)
 }
 
-n_paste <- lengths(regmatches(body, gregexpr("[ Paste ", body, fixed = TRUE)))
+n_paste <- count_matches("\\[ Paste ", body)
 cat("Wrote ", docx_path, "\n", sep = "")
-cat("  paste placeholders: ", n_paste, " (expected ", length(referenced), ")\n", sep = "")
+cat("  results: ", n_tables, " tables, ", n_graphics, " figures\n", sep = "")
+cat("  paste placeholders: ", n_paste, " (expected ", n_expected, ")\n", sep = "")
 
-if (n_paste != length(referenced)) {
-  stop("Placeholder count does not match the ", length(referenced),
-       " generated files referenced by the .tex.", call. = FALSE)
+if (n_paste != n_expected) {
+  stop("Placeholder count does not match the ", n_expected,
+       " results referenced by the .tex.", call. = FALSE)
 }
