@@ -23,7 +23,7 @@
 #
 # Outputs (to OUTPUT_DIR), each written as BOTH .pdf and .png:
 #   fig1-volume.{pdf,png}            Beaver Fig. 1 analogue: relative volume
-#   fig2-return-variability.{pdf,png} Beaver Fig. 5 analogue: return dispersion
+#   fig2-return-variability.{pdf,png} Beaver Fig. 6 analogue: return dispersion
 #   fig3-turnover-by-decade.{pdf,png} Median turnover, by decade
 #   fig4-variability-by-decade.{pdf,png} Return dispersion, by decade
 #   fig5-observations.{pdf,png}       Sanity check: obs per relative day
@@ -147,7 +147,7 @@ save_fig(fig1, "fig1-volume")
 
 # Figure 2: return variability ---------------------------------------------------
 
-# Beaver's Figure 5. The key insight of his design: do NOT plot mean
+# Beaver's Figure 6. The key insight of his design: do NOT plot mean
 # returns. An announcement is good news for some firms and bad news for
 # others, so the mean is near zero whether or not the announcement was
 # informative. Plot the DISPERSION instead -- if the announcement moves
@@ -169,7 +169,7 @@ fig2 <- pooled |>
        subtitle = period_label,
        x = "Trading days relative to earnings announcement",
        y = "Mean absolute market-adjusted return",
-       caption = cap(paste("Replication of Beaver (1968, Fig. 5) on modern data.",
+       caption = cap(paste("Replication of Beaver (1968, Fig. 6) on modern data.",
                            "Market-adjusted return = firm return less the CRSP",
                            "value-weighted index return."))) +
   theme_beaver

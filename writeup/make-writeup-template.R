@@ -74,8 +74,8 @@ doc <- read_docx() |>
 
   body_add_par("1. Introduction", style = "heading 1") |>
   body_add_par(paste(
-    "What question did Beaver ask, why did it matter in 1968, and what are",
-    "you doing about it? Two or three paragraphs."), style = "Normal") |>
+    "What question did Beaver ask, why did it matter in 1968, and what does",
+    "your replication do? Two or three paragraphs."), style = "Normal") |>
   body_add_par("", style = "Normal") |>
 
   body_add_par("2. Research design", style = "heading 1") |>
@@ -100,7 +100,7 @@ doc <- read_docx() |>
 
   body_add_par("3.2 Replication of Beaver's figures", style = "heading 2") |>
   add_placeholder("Paste Figure 1: Trading volume (compare to Beaver Fig. 1)") |>
-  add_placeholder("Paste Figure 2: Return variability (compare to Beaver Fig. 5)") |>
+  add_placeholder("Paste Figure 2: Return variability (compare to Beaver Fig. 6)") |>
   body_add_par("Interpret the figures in a paragraph.", style = "Normal") |>
   body_add_par("", style = "Normal") |>
 
