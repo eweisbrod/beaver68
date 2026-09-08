@@ -260,8 +260,14 @@ numbers by hand.
 **If you use LaTeX:** the template already `\input{}`s every generated table
 and `\includegraphics{}` every figure, so re-running the pipeline and
 recompiling updates every number automatically. Compile with
-`pdflatex → bibtex → pdflatex → pdflatex`. On Overleaf, upload the template,
-`references.bib`, and the contents of `output/`.
+`pdflatex → bibtex → pdflatex → pdflatex`.
+
+**On Overleaf**, upload the template, `references.bib`, and your `output/`
+folder. The template searches `../output/`, then `output/`, then its own
+folder, so it works whether you keep the repo's `writeup/` + `output/` layout
+or drop everything at the project root. A result it cannot find in any of those
+becomes a labelled placeholder box naming the file and the paths tried — the
+document still compiles, so a missing table never blocks you from writing.
 
 The LaTeX template carries a required preamble block for the generated tables
 (they use the `tabularray` package). Do not delete it.

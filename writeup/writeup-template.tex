@@ -13,14 +13,21 @@
 % TO COMPILE
 %   Locally:   pdflatex writeup-template  ->  bibtex writeup-template
 %              ->  pdflatex twice more
-%   Overleaf:  upload this file, references.bib, and the contents of your
-%              output/ folder. Overleaf's free tier does not sync with
+%   Overleaf:  upload this file, references.bib, and your output/ folder.
+%              Put output/ either beside this file or one level up --
+%              both are searched. Overleaf's free tier does not sync with
 %              GitHub, so you upload output/ by hand after each run.
 %
 % NOTE ON PATHS
-%   \graphicspath below assumes the default layout, with this file in
-%   writeup/ and OUTPUT_DIR set to output/. If you changed OUTPUT_DIR in
-%   .env, change the paths here to match.
+%   Generated tables and figures are looked for in ../output/, then
+%   output/, then this folder, so the repo layout and a flat Overleaf
+%   project both work with no edits. Anything not found in one of those
+%   three shows up as a labelled placeholder box rather than stopping the
+%   compile.
+%
+%   If you changed OUTPUT_DIR in .env to something other than output/,
+%   either rename the folder when you upload it or add your path to
+%   \graphicspath below and to the two \IfFileExists chains.
 % =============================================================================
 
 \documentclass[12pt]{article}
@@ -75,15 +82,27 @@
 % Second argument is the human name of the result. It is also what
 % writeup/make-writeup-docx.R turns into the "paste this here"
 % instruction in the Word version, so keep it descriptive.
+%
+% THREE LOCATIONS ARE SEARCHED, in this order:
+%
+%   ../output/   the repo layout, with this file in writeup/
+%   output/      this file and an output/ folder side by side
+%   ./           everything in one flat folder
+%
+% The second and third exist for Overleaf, where projects are commonly
+% flat and there is no folder above the root for "../" to reach. Getting
+% this wrong used to be loud, an outright "File not found"; now it is a
+% placeholder box, so the box names all three paths it tried.
 % -----------------------------------------------------------------------------
 \newcommand{\missingresult}[2]{%
   \begin{center}%
   \setlength{\fboxsep}{10pt}%
   \fbox{\parbox{0.75\textwidth}{%
     \centering
-    \textbf{[ #1 -- not generated yet ]}\par\medskip
-    {\small\itshape Expected \texttt{#2}. Run \texttt{src/run-all.R},
-     then recompile.}%
+    \textbf{[ #1 -- not found ]}\par\medskip
+    {\small\itshape Looked for \texttt{#2} in \texttt{../output/},
+     \texttt{output/}, and this folder. Either run \texttt{src/run-all.R}
+     to generate it, or move it to one of those places.}%
   }}%
   \end{center}%
 }
@@ -95,9 +114,10 @@
 % \input{} bare. Wrapping it in another \begin{table} produces the error
 % "LaTeX Error: Not in outer par mode."
 \newcommand{\resulttable}[2]{%
-  \IfFileExists{../output/#1.tex}%
-    {\input{../output/#1.tex}}%
-    {\missingresult{#2}{output/#1.tex}}%
+  \IfFileExists{../output/#1.tex}{\input{../output/#1.tex}}{%
+  \IfFileExists{output/#1.tex}{\input{output/#1.tex}}{%
+  \IfFileExists{#1.tex}{\input{#1.tex}}{%
+  \missingresult{#2}{#1.tex}}}}%
 }
 
 % \resultgraphic{file stem}{human name}
@@ -105,9 +125,10 @@
 % Goes INSIDE a figure environment, so that the \caption and \label stay
 % in plain LaTeX where you can edit them normally.
 \newcommand{\resultgraphic}[2]{%
-  \IfFileExists{../output/#1.pdf}%
-    {\includegraphics[width=0.85\textwidth]{../output/#1.pdf}}%
-    {\missingresult{#2}{output/#1.pdf}}%
+  \IfFileExists{../output/#1.pdf}{\includegraphics[width=0.85\textwidth]{../output/#1.pdf}}{%
+  \IfFileExists{output/#1.pdf}{\includegraphics[width=0.85\textwidth]{output/#1.pdf}}{%
+  \IfFileExists{#1.pdf}{\includegraphics[width=0.85\textwidth]{#1.pdf}}{%
+  \missingresult{#2}{#1.pdf}}}}%
 }
 
 % -----------------------------------------------------------------------------
@@ -129,7 +150,9 @@
 \newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
 \NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
 
-\graphicspath{{../output/}}
+% Same three locations the \IfFileExists chains search, so that a plain
+% \includegraphics you add yourself resolves the same way they do.
+\graphicspath{{../output/}{output/}{./}}
 
 \title{Replicating \citet{beaver1968}:\\
        The Information Content of Annual Earnings Announcements}
